@@ -3,6 +3,20 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
+
+  .loadMorePostsButton {
+    width: var(--content-proportion);
+
+    button {
+      border: none;
+      background: none;
+      color: var(--light-purple);
+
+      font-size: 1.125rem;
+      font-weight: 600;
+      line-height: 2.5rem;
+    }
+  }
 }
 
 .post {
@@ -47,7 +61,7 @@
     }
   }
 
-  & > div {
+  &>div {
     margin-bottom: 3rem;
   }
 

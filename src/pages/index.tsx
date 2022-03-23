@@ -8,6 +8,7 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import { useState } from 'react';
 
 interface Post {
   uid?: string;
@@ -21,15 +22,44 @@ interface Post {
 
 interface PostPagination {
   next_page: string;
-  posts: Post[];
+  results: Post[];
 }
 
 interface HomeProps {
   postsPagination: PostPagination;
 }
 
+function organizePrismicResponse(response) {
+  return response.results.map((post) => {
+    return {
+      uid: post.uid,
+      first_publication_date: format(new Date(post.first_publication_date), 'dd MMM yyy', { locale: ptBR }),
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      }
+    }
+  })
+
+}
+
 export default function Home({ postsPagination }: HomeProps) {
-  const { next_page, posts } = postsPagination;
+  const { next_page, results } = postsPagination;
+
+  const [posts, setPosts] = useState(results);
+  const [nextPageUrl, setNextPageUrl] = useState(next_page);
+
+  async function handleNextPosts() {
+    const data = await fetch(nextPageUrl).then(resp => resp.json());
+    const newPosts = organizePrismicResponse(data);
+
+    setNextPageUrl(data.next_page);
+    setPosts([
+      ...posts,
+      ...newPosts,
+    ]);
+  }
 
   return (
     <div className={styles.container}>
@@ -53,6 +83,13 @@ export default function Home({ postsPagination }: HomeProps) {
           </div>
         </div>
       ))}
+      {!!nextPageUrl && (
+        <div className={styles.loadMorePostsButton}>
+          <button onClick={handleNextPosts}>
+            Carregar mais posts
+          </button>
+        </div>
+      )}
     </div>
   )
 }
@@ -66,23 +103,13 @@ export const getStaticProps = async () => {
     pageSize: 5,
   });
 
-  const posts = postsResponse.results.map((post) => {
-    return {
-      uid: post.uid,
-      first_publication_date: format(new Date(post.first_publication_date), 'dd MMM yyy', { locale: ptBR }),
-      data: {
-        title: post.data.title,
-        subtitle: post.data.subtitle,
-        author: post.data.author,
-      }
-    }
-  })
+  const results = organizePrismicResponse(postsResponse);
 
   return {
     props: {
       postsPagination: {
-        next_page: '',
-        posts,
+        next_page: postsResponse.next_page,
+        results,
       }
     }
   }
