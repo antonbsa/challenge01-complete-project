@@ -1,1 +1,79 @@
-// TODO
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    width: 100vw;
+    max-height: 25rem;
+    margin-left: -25vw;
+  }
+
+  .post {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: var(--content-proportion);
+
+
+    .header {
+      margin-top: 5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .title {
+        font-weight: 700;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        display: flex;
+        flex-direction: row;
+        margin-top: 1.3rem;
+
+        >div {
+          display: flex;
+          align-items: center;
+
+          font-weight: 400;
+          font-size: 0.875rem;
+          color: var(--soft-gray);
+
+          span {
+            margin-left: 0.4rem;
+          }
+        }
+
+        &>div {
+          margin-right: 1.5rem;
+        }
+      }
+    }
+
+    .content {
+      .heading {
+        margin-top: 4rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+      }
+
+      .body {
+        color: var(--soft-gray);
+        font-size: 1rem;
+        line-height: 1.5rem;
+
+        &>*:not(:last-child) {
+          margin-bottom: 2rem;
+        }
+
+        p {
+          text-align: justify;
+
+        }
+      }
+    }
+  }
+}

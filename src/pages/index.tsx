@@ -9,6 +9,7 @@ import { getPrismicClient } from '../services/prismic';
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface Post {
   uid?: string;
@@ -33,7 +34,7 @@ function organizePrismicResponse(response) {
   return response.results.map((post) => {
     return {
       uid: post.uid,
-      first_publication_date: format(new Date(post.first_publication_date), 'dd MMM yyy', { locale: ptBR }),
+      first_publication_date: post.first_publication_date,
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -64,24 +65,26 @@ export default function Home({ postsPagination }: HomeProps) {
   return (
     <div className={styles.container}>
       {posts.map(post => (
-        <div key={post.uid} className={styles.post}>
-          <span className={styles.title}>
-            {post.data.title}
-          </span>
-          <span className={styles.subtitle}>
-            {post.data.subtitle}
-          </span>
-          <div className={styles.footer}>
-            <div>
-              <FiCalendar size={20} />
-              <span>{post.first_publication_date}</span>
-            </div>
-            <div>
-              <FiUser size={20} />
-              <span>{post.data.author}</span>
+        <Link key={post.uid} href={`post/${post.uid}`}>
+          <div className={styles.post}>
+            <span className={styles.title}>
+              {post.data.title}
+            </span>
+            <span className={styles.subtitle}>
+              {post.data.subtitle}
+            </span>
+            <div className={styles.footer}>
+              <div>
+                <FiCalendar size={20} />
+                <span>{format(new Date(post.first_publication_date), 'dd MMM yyy', { locale: ptBR })}</span>
+              </div>
+              <div>
+                <FiUser size={20} />
+                <span>{post.data.author}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </Link>
       ))}
       {!!nextPageUrl && (
         <div className={styles.loadMorePostsButton}>
